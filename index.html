@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
   <title>My LIFF app</title>
   <link rel="stylesheet" href="css/style.css" media="all">
 </head>
+
 <body>
   <p id="os"><b>OS:</b> </p>
   <p id="language"><b>Language:</b> </p>
@@ -30,20 +32,23 @@
   <p><a href="liff/path/?param=9">Link to Path</a></p>
 
   <button id="btnMsg" onclick="sendMsg()">Send Message</button>
+  <button id="btnFlexMsg" onclick="sendFlexMessage()">Send Flex Message</button>
   <button id="btnShare" onclick="shareMsg()">Share Target Picker</button>
   <button onclick="openWindow()">Open Window</button>
   <button id="btnScanCode" onclick="scanCode()">Scan Code</button>
   <button id="btnLogOut" onclick="logOut()">Log Out</button>
   <button id="btnClose" onclick="closed()">Close</button>
 
-  <!-- <script src="js/vconsole.min.js"></script> -->
-  <!-- <script>
-    var vConsole = new VConsole()
-    console.log("Hello World!")
-  </script> -->
-
-  <!-- <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script> -->
+  <script src="js/vconsole.min.js"></script>
   <script>
+    var vConsole = new VConsole();
+    console.log("Hello World!")
+  </script>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+
+    var globalUserid;
     function createUniversalLink() {
     }
 
@@ -72,21 +77,83 @@
     }
 
     async function getUserProfile() {
+      const profile = await liff.getProfile();
+      document.getElementById("pictureUrl").src = profile.pictureUrl;
+      document.getElementById("userId").append(profile.userId);
+      document.getElementById("statusMessage").append(profile.statusMessage);
+      document.getElementById("displayName").append(profile.displayName);
+      document.getElementById("decodedIDToken").append(liff.getDecodedIDToken().email);
+
     }
 
     function getEnvironment() {
     }
 
+    async function sendFlexMessage() {
+      try {
+        if (!globalUserid) {
+          const profile = await liff.getProfile();
+          globalUserid = profile.userId;
+        }
+        const uri = "https://gsct3c2p-3001.asse.devtunnels.ms";
+        const response = await fetch(`${uri}/api/v1/sendflexmessage/${globalUserid}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log("ส่งข้อความสำเร็จ:", result);
+        return result;
+      } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการส่งข้อความ:", error);
+      }
+    }
+
+    var globalUserid
+    async function sendFlexMessage() {
+      try {
+        if (!globalUserid) {
+          const profile = await liff.getProfile();
+          globalUserid = profile.userId;
+        }
+        const uri = "https://36vsstfx-3001.asse.devtunnels.ms";
+        const response = await fetch(`${uri}/api/v1/sendflexmessage/${globalUserid}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {3
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        console.log("ส่งส่ ข้อข้ ความสํา เร็จร็:", result);
+        return result;
+      } catch (error) {
+        console.error("เกิดข้อข้ ผิดผิ พลาดในการส่งส่ ข้อข้ ความ:", error);
+      }
+    }
+
     async function main() {
-      alert("LINE Developers x Skooldio")
-      await liff.init({ liffId: "YOUR-LIFF-ID" })
-      // getEnvironment()
-      // getUserProfile()
-      // getContext()
-      // getFriendship()
+
+      alert("LINE Developers x Skooldio");
+      await liff.init({
+        liffId: "2007030955-6Ow4L0Oq",
+        withLoginOnExternalBrowser: true
+      });
+      getEnvironment();
+      getUserProfile();
+      getContext();
+      getFriendship();
       // createUniversalLink()
     }
     main()
   </script>
 </body>
+
 </html>
